@@ -25,7 +25,6 @@ def main():
             'PickleDB Write': pickledb_write,
             'PickleDB Read': pickledb_read
         }
-        print(x)
         results.append({
             'Record Size': size,
             'MySQL Write': mysql_write,
