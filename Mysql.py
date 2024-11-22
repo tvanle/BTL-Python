@@ -1,36 +1,40 @@
+from datetime import datetime
 import pymysql
 import time
 import random
-from datetime import datetime
 
-# Kết nối MySQL
-connection = pymysql.connect(
-    host='localhost',
-    port=3307,
-    user='root',
-    password='123456',
-    database='test'
-)
-cursor = connection.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS data (id INT PRIMARY KEY, timestamp VARCHAR(255), value FLOAT)")
+def mysql_test(data_size):
+    connection = pymysql.connect(
+        host='localhost',
+        port=3307,
+        user='root',
+        password='123456',
+        database='test'
+    )
+    cursor = connection.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS data (id INT AUTO_INCREMENT PRIMARY KEY, timestamp VARCHAR(255), value FLOAT)")
 
-data_size = 10**4  # Số lượng dữ liệu cần ghi
-print("Đang ghi dữ liệu vào MySQL...")
-start = time.time()
-for i in range(1, data_size + 1):  # ID sẽ bắt đầu từ 1 và tăng dần
-    timestamp = datetime.now().isoformat()
-    value = random.random()
-    cursor.execute("INSERT INTO data (id, timestamp, value) VALUES (%s, %s, %s)", (i, timestamp, value))
-connection.commit()
-end = time.time()
-print(f"Thời gian ghi dữ liệu vào MySQL: {end - start:.2f} giây.")
+    # Writing data
+    start = time.time()
+    for i in range(data_size):
+        timestamp = datetime.now().isoformat()
+        value = random.random()
+        cursor.execute("INSERT INTO data (timestamp, value) VALUES (%s, %s)", (timestamp, value))
+    connection.commit()
+    write_time = time.time() - start
 
-# Đọc dữ liệu từ MySQL
-print("Đang đọc dữ liệu từ MySQL...")
-start = time.time()
-for i in range(1, data_size + 1):  # Lặp qua từng ID
-    cursor.execute("SELECT * FROM data WHERE id = %s", (i,))
-end = time.time()
-print(f"Thời gian đọc dữ liệu từ MySQL: {end - start:.2f} giây.")
+    # Reading data
+    start = time.time()
+    for i in range(1, data_size + 1):
+        cursor.execute("SELECT * FROM data WHERE id = %s", (i,))
+        cursor.fetchone()
+    read_time = time.time() - start
 
-connection.close()
+    connection.close()
+    return write_time, read_time
+
+if __name__ == "__main__":
+    data_size = 10**3
+    write_time, read_time = mysql_test(data_size)
+    print(f"Thời gian ghi: {write_time:.2f} giây")
+    print(f"Thời gian đọc: {read_time:.2f} giây")

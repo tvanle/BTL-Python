@@ -1,27 +1,30 @@
-import pickledb
-import time
 import random
+import time
 from datetime import datetime
+import pickledb
 
-# Tạo và ghi dữ liệu vào PickleDB
-db = pickledb.load("example.db", auto_dump=False)
+def pickledb_test(data_size):
+    db = pickledb.load('test_pickle.db', auto_dump=True)
 
-# Tạo 1 triệu dữ liệu
-data_size = 10**6
-print("Đang ghi dữ liệu vào PickleDB...")
-start = time.time()
-for i in range(data_size):
-    timestamp = datetime.now().isoformat()
-    value = random.random()
-    db.set(f"key_{i}", {"timestamp": timestamp, "value": value})
-db.dump()  # Lưu dữ liệu xuống file
-end = time.time()
-print(f"Thời gian ghi dữ liệu vào PickleDB: {end - start:.2f} giây.")
+    # Writing data
+    start = time.time()
+    for i in range(1, data_size + 1):
+        timestamp = datetime.now().isoformat()
+        value = random.random()
+        db.set(str(i), {'timestamp': timestamp, 'value': value})
+    write_time = time.time() - start
 
-# Đọc dữ liệu từ PickleDB
-print("Đang đọc dữ liệu từ PickleDB...")
-start = time.time()
-for key in db.getall():
-    db.get(key)
-end = time.time()
-print(f"Thời gian đọc dữ liệu từ PickleDB: {end - start:.2f} giây.")
+    # Reading data
+    start = time.time()
+    for i in range(1, data_size + 1):
+        val = db.get(str(i))
+    read_time = time.time() - start
+
+    db.dump()
+    return write_time, read_time
+
+if __name__ == "__main__":
+    data_size = 10**3
+    write_time, read_time = pickledb_test(data_size)
+    print(f"Thời gian ghi: {write_time:.2f} giây")
+    print(f"Thời gian đọc: {read_time:.2f} giây")
