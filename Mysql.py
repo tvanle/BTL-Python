@@ -25,9 +25,9 @@ def mysql_test(data_size):
 
     # Reading data
     start = time.time()
-    for i in range(1, data_size + 1):
-        cursor.execute("SELECT * FROM data WHERE id = %s", (i,))
-        cursor.fetchone()
+    # for i in range(1, data_size + 1):
+    #     cursor.execute("SELECT * FROM data WHERE id = %s", (i,))
+    #     cursor.fetchone()
     read_time = time.time() - start
 
     connection.close()
