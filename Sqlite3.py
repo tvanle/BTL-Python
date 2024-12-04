@@ -30,7 +30,7 @@ def sqlite_test(data_size):
 
 
 if __name__ == "__main__":
-    data_size = 10 ** 6
+    data_size = 10 ** 3
     write_time, read_time = sqlite_test(data_size)
     print(f"Thời gian ghi: {write_time:.2f} giây")
     print(f"Thời gian đọc: {read_time:.2f} giây")
